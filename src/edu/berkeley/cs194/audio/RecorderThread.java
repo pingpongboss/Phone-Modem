@@ -5,9 +5,11 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
 
 public class RecorderThread extends Thread {
+	public final static int THRESHOLD = 200;
+	
 	FrequencyReceiver receiver;
 	// variable to start or stop recording
-	public boolean recording;
+	boolean recording;
 	// the public variable that contains the frequency value "heard", it is
 	// updated continually while the thread is running.
 	public int frequency;
@@ -105,6 +107,10 @@ public class RecorderThread extends Thread {
 		recorder = null;
 
 	}// run
+
+	public void end() {
+		recording = false;
+	}
 
 	public interface FrequencyReceiver {
 		void updateFrequency(int frequency, int amplitude);
