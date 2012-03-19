@@ -34,7 +34,7 @@ public class RecorderThread extends Thread {
 				AudioFormat.ENCODING_PCM_16BIT) * 3;
 
 		// instantiate the AudioRecorder
-		recorder = new AudioRecord(AudioSource.MIC, 8000,
+		recorder = new AudioRecord(AudioSource.VOICE_CALL, 8000,
 				AudioFormat.CHANNEL_CONFIGURATION_MONO,
 				AudioFormat.ENCODING_PCM_16BIT, bufferSize);
 		// variable to use start or stop recording
