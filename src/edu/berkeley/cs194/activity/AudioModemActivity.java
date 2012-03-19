@@ -104,6 +104,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		player.end();
 	}
 
+
 	@Override
 	public void updateFrequency(final int frequency, final int amplitude) {
 		if (amplitude > 200000) {

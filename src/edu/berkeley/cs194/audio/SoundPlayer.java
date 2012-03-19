@@ -1,5 +1,6 @@
 package edu.berkeley.cs194.audio;
 
+import android.R.integer;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -7,6 +8,7 @@ import android.media.AudioTrack;
 public class SoundPlayer extends Thread {
 	public final static int HIGH = 1046;
 	public final static int LOW = 880;
+	public final static int MEDIUM = (HIGH + LOW) / 2;
 	
 	private final int duration = 1; // seconds
 	private final int sampleRate = 8000;
@@ -61,7 +63,7 @@ public class SoundPlayer extends Thread {
 	void playSound() {
 		if (!playing)
 			return;
-		audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate,
+		audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL, sampleRate,
 				AudioFormat.CHANNEL_CONFIGURATION_MONO,
 				AudioFormat.ENCODING_PCM_16BIT, numSamples * frequencies.length
 						* 2, AudioTrack.MODE_STATIC);
