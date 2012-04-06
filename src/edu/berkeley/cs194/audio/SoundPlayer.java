@@ -1,6 +1,5 @@
 package edu.berkeley.cs194.audio;
 
-import android.R.integer;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -9,10 +8,11 @@ public class SoundPlayer extends Thread {
 	public final static int HIGH = 1046;
 	public final static int LOW = 880;
 	public final static int MEDIUM = (HIGH + LOW) / 2;
-	
-	private final int duration = 1; // seconds
+	public final static int SILENT = -1;
+
+	private final double duration = .5; // seconds
 	private final int sampleRate = 8000;
-	private final int numSamples = duration * sampleRate;
+	private final int numSamples = (int) (duration * sampleRate);
 	private double sample[];
 	private byte generatedSnd[];
 	private int[] frequencies;

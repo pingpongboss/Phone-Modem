@@ -6,7 +6,7 @@ import android.media.MediaRecorder.AudioSource;
 
 public class RecorderThread extends Thread {
 	public final static int THRESHOLD = 200;
-	
+
 	FrequencyReceiver receiver;
 	// variable to start or stop recording
 	boolean recording;

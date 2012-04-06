@@ -2,6 +2,7 @@ package edu.berkeley.cs194.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -11,13 +12,14 @@ import edu.berkeley.cs194.R;
 import edu.berkeley.cs194.audio.RecorderThread;
 import edu.berkeley.cs194.audio.RecorderThread.FrequencyReceiver;
 import edu.berkeley.cs194.audio.SoundPlayer;
+import edu.berkeley.cs194.util.Utils;
 
 public class AudioModemActivity extends Activity implements FrequencyReceiver {
 	RecorderThread recorder;
 	SoundPlayer player;
 	TextView status;
-	EditText frequency;
-	Button play, stop, test, high, low;
+	EditText frequency, message;
+	Button play, stop, test, high, low, send;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -32,6 +34,8 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		test = (Button) findViewById(R.id.test);
 		high = (Button) findViewById(R.id.high);
 		low = (Button) findViewById(R.id.low);
+		message = (EditText) findViewById(R.id.message);
+		send = (Button) findViewById(R.id.send);
 
 		play.setOnClickListener(new OnClickListener() {
 
@@ -86,6 +90,20 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 				player.output(new int[] { SoundPlayer.LOW });
 			}
 		});
+
+		send.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				player.end();
+
+				player = new SoundPlayer();
+				int[] frequencies = Utils.textToMorse(message.getText()
+						.toString());
+				Log.d("AudioModemActivity", frequencies.toString());
+				player.output(frequencies);
+			}
+		});
 	}
 
 	@Override
@@ -103,7 +121,6 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		recorder.end();
 		player.end();
 	}
-
 
 	@Override
 	public void updateFrequency(final int frequency, final int amplitude) {
