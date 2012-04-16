@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.berkeley.cs194.audio.RecorderThread;
 import edu.berkeley.cs194.audio.SoundPlayer;
 
 public class Utils {
@@ -13,6 +14,9 @@ public class Utils {
 
 		ArrayList<Integer> result = new ArrayList<Integer>();
 		lastWasWhitespace = true;
+		for(int i = 0; i < 25; i++) {
+			result.add(SoundPlayer.HIGH);
+		}
 		for (int i = 0; i < strlen; i++) {
 			char c = text.charAt(i);
 			if (Character.isWhitespace(c)) {
@@ -128,5 +132,14 @@ public class Utils {
 			ret[i] = iterator.next().intValue();
 		}
 		return ret;
+	}
+	
+	public static String morseToText(List<Integer> samples) {
+		String text = "";
+		for(int i = 0; i<samples.size()-25; i++) {			
+			text += samples.get(i).intValue()>RecorderThread.THRESHOLD ? 1:0;			
+		}
+		return null;
+		
 	}
 }

@@ -8,6 +8,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 
 public class RecorderThread extends Thread {
 	public final static int THRESHOLD = 200;
@@ -50,6 +51,7 @@ public class RecorderThread extends Thread {
 			if(curTime >= startTime + SoundPlayer.duration*1000*3/4) {
 				sampleTracker += frequency/4;
 				sampleList.add(sampleTracker);
+				Log.v("sampleTracker", ""+sampleTracker);
 				return true;
 			}
 			else if(curTime >= startTime + SoundPlayer.duration*1000*2/4){
@@ -142,19 +144,30 @@ public class RecorderThread extends Thread {
 					// crossings, times the number of samples our buffersize is
 					// per second.
 					frequency = (8000 / bufferSize) * (numCrossing / 2);
+					//Start taking samples from the recording
 					if(frequency > THRESHOLD) {
 						if(startTime == 0L) {
 							startTime = SystemClock.uptimeMillis();
 						}
 						else {
 							long curTime = SystemClock.uptimeMillis();
+							
 							if(curTime - startTime > SoundPlayer.duration*1000*5*5) {
+								
 								started = true;
 								startTime = curTime;
 								sampleList = new ArrayList<Integer>();
 								sampleHandler.removeCallbacks(takeSampleTask);
+								//start taking samples delayed by duration/8;
 								sampleHandler.postDelayed(takeSampleTask, (long) (startTime +SoundPlayer.duration*1000/4/2));
 							}
+							
+						}
+					} //endif
+					else {
+						//if low frequency and have not starte taking samples, reset startTime to 0
+						if(!started) {
+							startTime = 0L;
 						}
 					}
 					if(started) {
@@ -171,8 +184,8 @@ public class RecorderThread extends Thread {
 								sampleHandler.removeCallbacks(takeSampleTask);
 								startTime = 0L;
 							}
-						}
-					}
+						}//endif
+					}//endif
 					int amplitude = numCrossing * bufferSize;
 					receiver.updateFrequency(frequency, amplitude);
 
