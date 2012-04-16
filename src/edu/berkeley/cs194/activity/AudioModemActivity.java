@@ -20,6 +20,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 	TextView status;
 	EditText frequency, message;
 	Button play, stop, test, high, low, send;
+	
 
 	/** Called when the activity is first created. */
 	@Override

@@ -1,11 +1,22 @@
 package edu.berkeley.cs194.audio;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
+import android.os.Handler;
+import android.os.SystemClock;
 
 public class RecorderThread extends Thread {
 	public final static int THRESHOLD = 200;
+	
+	private long startTime = 0L;
+	private boolean started = false;
+	private int sampleTracker = 0;
+	private List<Integer> sampleList;
+	private Handler sampleHandler = new Handler();
 
 	FrequencyReceiver receiver;
 	// variable to start or stop recording
@@ -14,20 +25,59 @@ public class RecorderThread extends Thread {
 	// updated continually while the thread is running.
 	public int frequency;
 
+
 	public RecorderThread(FrequencyReceiver receiver) {
 		this.receiver = receiver;
 		android.os.Process
 				.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 		start();
 	}
+	private Runnable takeSampleTask = new Runnable() {
 
+		@Override
+		public void run() {
+			long curTime = SystemClock.uptimeMillis();
+			if(takeSample(frequency, curTime, startTime, SoundPlayer.duration)) {
+				startTime = curTime;
+			}
+			sampleHandler.postAtTime(this, (long) (curTime+SoundPlayer.duration*1000/4));
+			
+			
+		}
+
+		private boolean takeSample(int frequency, long curTime, long startTime,
+				double duration) {
+			if(curTime >= startTime + SoundPlayer.duration*1000*3/4) {
+				sampleTracker += frequency/4;
+				sampleList.add(sampleTracker);
+				return true;
+			}
+			else if(curTime >= startTime + SoundPlayer.duration*1000*2/4){
+				sampleTracker += frequency/4;
+				return false;
+			}
+			else if(curTime >= startTime + SoundPlayer.duration*1000*1/4) {
+				sampleTracker += frequency/4;
+				return false;
+			}
+			else if(curTime >= startTime) {
+				sampleTracker = frequency/4;
+				return false;
+			}
+			return false;	
+		}		
+	};
 	@Override
 	public void run() {
 		AudioRecord recorder;
 		int numCrossing, p;
 		short audioData[];
 		int bufferSize;
+		
 
+
+		
+		
 		bufferSize = AudioRecord.getMinBufferSize(8000,
 				AudioFormat.CHANNEL_CONFIGURATION_MONO,
 				// get the buffer size to use with this audio record
@@ -39,10 +89,11 @@ public class RecorderThread extends Thread {
 				AudioFormat.ENCODING_PCM_16BIT, bufferSize);
 		// variable to use start or stop recording
 		recording = true;
+		sampleList = null;
 		// short array that pcm data is put into.
 		audioData = new short[bufferSize]; // short array that pcm data is put
 											// into.
-
+		int sampleTracker = 0;
 		// loop while recording is needed
 		while (recording) {
 			// check to see if the recorder has initialized yet.
@@ -91,6 +142,37 @@ public class RecorderThread extends Thread {
 					// crossings, times the number of samples our buffersize is
 					// per second.
 					frequency = (8000 / bufferSize) * (numCrossing / 2);
+					if(frequency > THRESHOLD) {
+						if(startTime == 0L) {
+							startTime = SystemClock.uptimeMillis();
+						}
+						else {
+							long curTime = SystemClock.uptimeMillis();
+							if(curTime - startTime > SoundPlayer.duration*1000*5*5) {
+								started = true;
+								startTime = curTime;
+								sampleList = new ArrayList<Integer>();
+								sampleHandler.removeCallbacks(takeSampleTask);
+								sampleHandler.postDelayed(takeSampleTask, (long) (startTime +SoundPlayer.duration*1000/4/2));
+							}
+						}
+					}
+					if(started) {
+						if(sampleList.size() > 25) {
+							boolean done = true;
+							for(int i = sampleList.size()-25; i < sampleList.size(); i++) {
+								if(sampleList.get(i).intValue() < THRESHOLD) {
+									done = false;
+									break;
+								}
+							}
+							if(done) {
+								started=false;
+								sampleHandler.removeCallbacks(takeSampleTask);
+								startTime = 0L;
+							}
+						}
+					}
 					int amplitude = numCrossing * bufferSize;
 					receiver.updateFrequency(frequency, amplitude);
 
