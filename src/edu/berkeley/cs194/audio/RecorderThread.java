@@ -45,7 +45,8 @@ public class RecorderThread extends Thread {
 			
 			
 		}
-
+		//takes sample once every duration/4 and average the result over a duration.
+		//add that to sampleList
 		private boolean takeSample(int frequency, long curTime, long startTime,
 				double duration) {
 			if(curTime >= startTime + SoundPlayer.duration*1000*3/4) {
@@ -171,6 +172,7 @@ public class RecorderThread extends Thread {
 						}
 					}
 					if(started) {
+						//see if last 25 samples are all frequency > THRESHOLD, if so send end signal
 						if(sampleList.size() > 25) {
 							boolean done = true;
 							for(int i = sampleList.size()-25; i < sampleList.size(); i++) {
