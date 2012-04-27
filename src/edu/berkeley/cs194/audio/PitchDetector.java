@@ -55,11 +55,10 @@ public class PitchDetector extends Thread {
 	public void run() {
 		android.os.Process
 				.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+
 		recorder_ = new AudioRecord(AudioSource.MIC, RATE, CHANNEL_MODE,
 				ENCODING, 6144);
-		// recorder_ = new AudioRecord(AudioSource.VOICE_CALL, RATE,
-		// CHANNEL_MODE,
-		// ENCODING, 6144);
+
 		if (recorder_.getState() != AudioRecord.STATE_INITIALIZED) {
 			return;
 		}

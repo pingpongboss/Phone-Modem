@@ -21,7 +21,7 @@ import edu.berkeley.cs194.util.Utils;
 public class AudioModemActivity extends Activity implements FrequencyReceiver {
 	PitchDetector detector;
 	SoundPlayer player;
-	TextView status;
+	TextView status, status2;
 	EditText frequency, message;
 	Button play, stop, test, high, low, send;
 
@@ -32,6 +32,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		setContentView(R.layout.main);
 
 		status = (TextView) findViewById(R.id.status);
+		status2 = (TextView) findViewById(R.id.status2);
 		frequency = (EditText) findViewById(R.id.frequency);
 		play = (Button) findViewById(R.id.play);
 		stop = (Button) findViewById(R.id.stop);
@@ -115,7 +116,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		super.onResume();
 
 		ArrayList<FrequencyReceiver> receivers = new ArrayList<PitchDetector.FrequencyReceiver>();
-		// receivers.add(this);
+		receivers.add(this);
 		receivers.add(receiver);
 		detector = new PitchDetector(receivers);
 		player = new SoundPlayer();
@@ -138,7 +139,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 
 				@Override
 				public void run() {
-					status.setText(String.format("(f:%d : a:%d)",
+					status2.setText(String.format("(f:%d : a:%d)",
 							Math.round(frequency), Math.round(amplitude)));
 				}
 

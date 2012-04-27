@@ -65,15 +65,12 @@ public class SoundPlayer extends Thread {
 	void playSound() {
 		if (!playing)
 			return;
+
 		audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate,
 				AudioFormat.CHANNEL_CONFIGURATION_MONO,
 				AudioFormat.ENCODING_PCM_16BIT, numSamples * frequencies.length
 						* 2, AudioTrack.MODE_STATIC);
-		// audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL,
-		// sampleRate,
-		// AudioFormat.CHANNEL_CONFIGURATION_MONO,
-		// AudioFormat.ENCODING_PCM_16BIT, numSamples * frequencies.length
-		// * 2, AudioTrack.MODE_STATIC);
+
 		audioTrack.write(generatedSnd, 0, generatedSnd.length);
 		audioTrack.play();
 	}
