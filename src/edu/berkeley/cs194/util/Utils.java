@@ -135,11 +135,86 @@ public class Utils {
 	}
 
 	public static String morseToText(List<Integer> samples) {
-		String text = "";
+		String input = "";
 		for (int i = 0; i < samples.size(); i++) {
-			text += samples.get(i).intValue() == SoundPlayer.HIGH ? "1" : "0";
+			input += samples.get(i).intValue() == SoundPlayer.HIGH ? "1" : "2";
 		}
-		return text;
 
+		String output = "";
+		if (input.equals("12")) {
+			output = "A";
+		} else if (input.equals("2111")) {
+			output = "B";
+		} else if (input.equals("2121")) {
+			output = "C";
+		} else if (input.equals("211")) {
+			output = "D";
+		} else if (input.equals("1")) {
+			output = "E";
+		} else if (input.equals("1121")) {
+			output = "F";
+		} else if (input.equals("221")) {
+			output = "G";
+		} else if (input.equals("1111")) {
+			output = "H";
+		} else if (input.equals("11")) {
+			output = "I";
+		} else if (input.equals("1222")) {
+			output = "J";
+		} else if (input.equals("212")) {
+			output = "K";
+		} else if (input.equals("1211")) {
+			output = "L";
+		} else if (input.equals("22")) {
+			output = "M";
+		} else if (input.equals("21")) {
+			output = "N";
+		} else if (input.equals("222")) {
+			output = "O";
+		} else if (input.equals("1221")) {
+			output = "P";
+		} else if (input.equals("2212")) {
+			output = "Q";
+		} else if (input.equals("121")) {
+			output = "R";
+		} else if (input.equals("111")) {
+			output = "S";
+		} else if (input.equals("2")) {
+			output = "T";
+		} else if (input.equals("112")) {
+			output = "U";
+		} else if (input.equals("1112")) {
+			output = "V";
+		} else if (input.equals("122")) {
+			output = "W";
+		} else if (input.equals("2112")) {
+			output = "X";
+		} else if (input.equals("2122")) {
+			output = "Y";
+		} else if (input.equals("2211")) {
+			output = "Z";
+		} else if (input.equals("22222")) {
+			output = "0";
+		} else if (input.equals("12222")) {
+			output = "1";
+		} else if (input.equals("11222")) {
+			output = "2";
+		} else if (input.equals("11122")) {
+			output = "3";
+		} else if (input.equals("11112")) {
+			output = "4";
+		} else if (input.equals("11111")) {
+			output = "5";
+		} else if (input.equals("21111")) {
+			output = "6";
+		} else if (input.equals("22111")) {
+			output = "7";
+		} else if (input.equals("22211")) {
+			output = "8";
+		} else if (input.equals("22221")) {
+			output = "9";
+		}
+
+		return output;
 	}
 }

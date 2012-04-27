@@ -175,7 +175,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 							tones.clear();
 							started = true;
 							Log.d("Receiver",
-									"Control tone succeeded. Listening for text.");
+									"Control tone succeeded. Connection opened.");
 						} else if (tones.size() == 1) {
 							Log.d("Receiver", "Listening for "
 									+ SoundPlayer.CONTROL_TONE_NUM
@@ -191,6 +191,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 				if (started) {
 					if (tones.isEmpty()) {
 						started = false;
+						Log.d("Receiver", "Connection closed.");
 					} else {
 						String text = Utils.morseToText(tones);
 						Log.d("Receiver", "Text: " + text);
