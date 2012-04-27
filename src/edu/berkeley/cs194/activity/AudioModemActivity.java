@@ -134,7 +134,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 	public void updateFrequency(final double frequency, final double amplitude,
 			final HashMap<Double, Double> frequencies) {
 
-		if (amplitude > 500) {
+		if (amplitude > SoundPlayer.AMPLITUDE_THRESHOLD) {
 			runOnUiThread(new Runnable() {
 
 				@Override
@@ -162,7 +162,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 			}
 			lastTime = current;
 
-			if (amplitude > 500) {
+			if (amplitude > SoundPlayer.AMPLITUDE_THRESHOLD) {
 				// we hear a tone
 				int tone = frequency > SoundPlayer.MEDIUM ? SoundPlayer.HIGH
 						: SoundPlayer.LOW;

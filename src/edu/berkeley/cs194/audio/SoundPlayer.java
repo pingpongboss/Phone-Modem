@@ -11,6 +11,7 @@ public class SoundPlayer extends Thread {
 	public final static int SILENT = -1;
 
 	public final static int CONTROL_TONE_NUM = 6;
+	public final static int AMPLITUDE_THRESHOLD = 10000;
 
 	public final static double duration = .35; // seconds
 	private final int sampleRate = 8000;
