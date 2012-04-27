@@ -14,7 +14,7 @@ public class Utils {
 
 		ArrayList<Integer> result = new ArrayList<Integer>();
 		lastWasWhitespace = true;
-		for(int i = 0; i < 25; i++) {
+		for (int i = 0; i < SoundPlayer.CONTROL_TONE_NUM; i++) {
 			result.add(SoundPlayer.HIGH);
 		}
 		for (int i = 0; i < strlen; i++) {
@@ -133,13 +133,13 @@ public class Utils {
 		}
 		return ret;
 	}
-	
+
 	public static String morseToText(List<Integer> samples) {
 		String text = "";
-		for(int i = 0; i<samples.size()-25; i++) {			
-			text += samples.get(i).intValue()>RecorderThread.THRESHOLD ? 1:0;			
+		for (int i = 0; i < samples.size(); i++) {
+			text += samples.get(i).intValue() == SoundPlayer.HIGH ? "1" : "0";
 		}
-		return null;
-		
+		return text;
+
 	}
 }

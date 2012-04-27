@@ -10,7 +10,9 @@ public class SoundPlayer extends Thread {
 	public final static int MEDIUM = (HIGH + LOW) / 2;
 	public final static int SILENT = -1;
 
-	public final static double duration = .6; // seconds
+	public final static int CONTROL_TONE_NUM = 6;
+
+	public final static double duration = .35; // seconds
 	private final int sampleRate = 8000;
 	private final int numSamples = (int) (duration * sampleRate);
 	private double sample[];
@@ -67,10 +69,11 @@ public class SoundPlayer extends Thread {
 				AudioFormat.CHANNEL_CONFIGURATION_MONO,
 				AudioFormat.ENCODING_PCM_16BIT, numSamples * frequencies.length
 						* 2, AudioTrack.MODE_STATIC);
-//		audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL, sampleRate,
-//				AudioFormat.CHANNEL_CONFIGURATION_MONO,
-//				AudioFormat.ENCODING_PCM_16BIT, numSamples * frequencies.length
-//						* 2, AudioTrack.MODE_STATIC);
+		// audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL,
+		// sampleRate,
+		// AudioFormat.CHANNEL_CONFIGURATION_MONO,
+		// AudioFormat.ENCODING_PCM_16BIT, numSamples * frequencies.length
+		// * 2, AudioTrack.MODE_STATIC);
 		audioTrack.write(generatedSnd, 0, generatedSnd.length);
 		audioTrack.play();
 	}

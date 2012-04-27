@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:layout_weight="1"
-            android:ems="10" android:hint="Input Message"/>
+            android:ems="10" android:hint="Input Message" android:text="test"/>
 
         <Button
             android:id="@+id/send"

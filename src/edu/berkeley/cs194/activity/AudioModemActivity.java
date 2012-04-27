@@ -148,19 +148,60 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 
 	FrequencyReceiver receiver = new FrequencyReceiver() {
 		long lastTime = -1;
+		ArrayList<Integer> tones = new ArrayList<Integer>();
+		boolean started = false;
 
 		@Override
 		public void updateFrequency(double frequency, double amplitude,
 				HashMap<Double, Double> frequencies) {
 			long current = SystemClock.uptimeMillis();
 			if (lastTime != -1) {
-				long diff = current - lastTime;
-				Log.d("Receiver", "diff: " + diff);
+				// long diff = current - lastTime;
+				// Log.d("Receiver", "diff: " + diff);
 			}
 			lastTime = current;
 
 			if (amplitude > 500) {
-				Log.d("Receiver", "received " + frequency);
+				// we hear a tone
+				int tone = frequency > SoundPlayer.MEDIUM ? SoundPlayer.HIGH
+						: SoundPlayer.LOW;
+				tones.add(tone);
+				if (started) {
+					// add tone to list and wait for silence
+				} else {
+					// listen for control signal
+					if (tone == SoundPlayer.HIGH) {
+						if (tones.size() == SoundPlayer.CONTROL_TONE_NUM) {
+							tones.clear();
+							started = true;
+							Log.d("Receiver",
+									"Control tone succeeded. Listening for text.");
+						} else if (tones.size() == 1) {
+							Log.d("Receiver", "Listening for "
+									+ SoundPlayer.CONTROL_TONE_NUM
+									+ " HIGH tones.");
+						}
+					} else {
+						tones.clear();
+						Log.d("Receiver", "Control tone failed.");
+					}
+				}
+			} else {
+				// silence
+				if (started) {
+					if (tones.isEmpty()) {
+						started = false;
+					} else {
+						String text = Utils.morseToText(tones);
+						Log.d("Receiver", "Text: " + text);
+					}
+					tones.clear();
+				} else {
+					if (!tones.isEmpty()) {
+						tones.clear();
+						Log.d("Receiver", "Control tone failed.");
+					}
+				}
 			}
 		}
 	};

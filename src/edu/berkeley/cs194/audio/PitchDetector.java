@@ -27,8 +27,8 @@ public class PitchDetector extends Thread {
 	private final static int ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
 	private final static int BUFFER_SIZE_IN_MS = 3000;
-	private final static int CHUNK_SIZE_IN_SAMPLES_POW2 = 11;
-	private final static int CHUNK_SIZE_IN_SAMPLES = 2048; // = 2 ^
+	private final static int CHUNK_SIZE_IN_SAMPLES_POW2 = 7;
+	private final static int CHUNK_SIZE_IN_SAMPLES = 128; // = 2 ^
 															// CHUNK_SIZE_IN_SAMPLES_POW2
 	private final static int CHUNK_SIZE_IN_MS = 1000 * CHUNK_SIZE_IN_SAMPLES
 			/ RATE;
@@ -108,7 +108,7 @@ public class PitchDetector extends Thread {
 			}
 			PostToUI(best_frequency, best_amplitude, frequencies);
 
-			// delay thread so that we update every 600 ms
+			// delay thread so that we update every duration
 			long duration = (long) (SoundPlayer.duration * 1000);
 			final long current = SystemClock.uptimeMillis();
 			long delay = 0;
