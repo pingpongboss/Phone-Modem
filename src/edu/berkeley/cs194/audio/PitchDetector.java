@@ -18,7 +18,6 @@ import android.media.AudioRecord;
 import android.media.AudioRecord.OnRecordPositionUpdateListener;
 import android.media.MediaRecorder.AudioSource;
 import android.os.Handler;
-import android.os.SystemClock;
 
 public class PitchDetector extends Thread {
 	// Currently, only this combination of rate, encoding and channel mode
@@ -28,8 +27,8 @@ public class PitchDetector extends Thread {
 	private final static int ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
 	private final static int BUFFER_SIZE_IN_MS = 3000;
-	private final static int CHUNK_SIZE_IN_SAMPLES_POW2 = 9;
-	private final static int CHUNK_SIZE_IN_SAMPLES = 512; // = 2 ^
+	private final static int CHUNK_SIZE_IN_SAMPLES_POW2 = 7;
+	private final static int CHUNK_SIZE_IN_SAMPLES = 128; // = 2 ^
 															// CHUNK_SIZE_IN_SAMPLES_POW2
 	private final static int CHUNK_SIZE_IN_MS = 1000 * CHUNK_SIZE_IN_SAMPLES
 			/ RATE;
@@ -58,9 +57,6 @@ public class PitchDetector extends Thread {
 				.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 		recorder_ = new AudioRecord(AudioSource.MIC, RATE, CHANNEL_MODE,
 				ENCODING, 6144);
-		// recorder_ = new AudioRecord(AudioSource.VOICE_CALL, RATE,
-		// CHANNEL_MODE,
-		// ENCODING, 6144);
 		if (recorder_.getState() != AudioRecord.STATE_INITIALIZED) {
 			return;
 		}
