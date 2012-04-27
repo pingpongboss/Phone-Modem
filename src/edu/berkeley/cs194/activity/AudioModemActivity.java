@@ -168,6 +168,9 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 				int tone = frequency > SoundPlayer.MEDIUM ? SoundPlayer.HIGH
 						: SoundPlayer.LOW;
 				tones.add(tone);
+
+//				Log.d("Receiver", "Tone: "
+//						+ (tone == SoundPlayer.HIGH ? "HIGH" : "LOW"));
 				if (started) {
 					// add tone to list and wait for silence
 				} else {
@@ -200,6 +203,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 						Log.d("Receiver", "Connection closed.");
 						disconnected();
 					} else {
+//						Log.d("Receiver", "Tone: " + "SPACE");
 						String text = Utils.morseToText(tones);
 						Log.d("Receiver", "Text: " + text);
 						addLetter(text);

@@ -69,13 +69,13 @@ public class PitchDetector extends Thread {
 		final int max_frequency_fft = Math.round(MAX_FREQUENCY
 				* CHUNK_SIZE_IN_SAMPLES / RATE);
 		recorder_.startRecording();
-		recorder_.setNotificationMarkerPosition(500);
+		recorder_.setNotificationMarkerPosition(800);
 
 		recorder_.setRecordPositionUpdateListener(new OnRecordPositionUpdateListener() {
 
 			@Override
 			public void onMarkerReached(AudioRecord arg0) {
-				recorder_.setPositionNotificationPeriod(1000);
+				recorder_.setPositionNotificationPeriod(1600);
 				
 			}
 
