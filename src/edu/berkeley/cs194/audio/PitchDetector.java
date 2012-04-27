@@ -12,6 +12,7 @@ package edu.berkeley.cs194.audio;
 
 import java.lang.Runnable;
 import java.lang.Thread;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.media.AudioFormat;
@@ -36,25 +37,27 @@ public class PitchDetector extends Thread {
 			/ 1000 * 2;
 	private final static int CHUNK_SIZE_IN_BYTES = RATE * CHUNK_SIZE_IN_MS
 			/ 1000 * 2;
-	private final static int MIN_FREQUENCY = 50; // HZ
+	private final static int MIN_FREQUENCY = 500; // HZ
 	private final static int MAX_FREQUENCY = 2000; // HZ - it's for guitar,
 													// should be enough
 	private final static int DRAW_FREQUENCY_STEP = 10;
 
 	// private final static int MIN_AMPLITUDE = 100;
 
-	public PitchDetector(FrequencyReceiver receiver) {
-		receiver_ = receiver;
+	public PitchDetector(ArrayList<PitchDetector.FrequencyReceiver> receivers) {
+		receivers_ = receivers;
 		handler_ = new Handler();
-		
+
 		start();
 	}
 
 	public void run() {
 		android.os.Process
 				.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
-		recorder_ = new AudioRecord(AudioSource.VOICE_CALL, RATE, CHANNEL_MODE,
+		recorder_ = new AudioRecord(AudioSource.MIC, RATE, CHANNEL_MODE,
 				ENCODING, 6144);
+//		recorder_ = new AudioRecord(AudioSource.VOICE_CALL, RATE, CHANNEL_MODE,
+//				ENCODING, 6144);
 		if (recorder_.getState() != AudioRecord.STATE_INITIALIZED) {
 			return;
 		}
@@ -109,7 +112,9 @@ public class PitchDetector extends Thread {
 			final HashMap<Double, Double> frequencies) {
 		handler_.post(new Runnable() {
 			public void run() {
-				receiver_.updateFrequency(frequency, amplitude, frequencies);
+				for (FrequencyReceiver receiver : receivers_) {
+					receiver.updateFrequency(frequency, amplitude, frequencies);
+				}
 			}
 		});
 	}
@@ -121,5 +126,5 @@ public class PitchDetector extends Thread {
 
 	private AudioRecord recorder_;
 	private Handler handler_;
-	FrequencyReceiver receiver_;
+	ArrayList<FrequencyReceiver> receivers_;
 }

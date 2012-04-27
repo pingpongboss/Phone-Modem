@@ -1,5 +1,7 @@
 package edu.berkeley.cs194.activity;
 
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -12,8 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import edu.berkeley.cs194.R;
-import edu.berkeley.cs194.audio.PitchDetector.FrequencyReceiver;
 import edu.berkeley.cs194.audio.PitchDetector;
+import edu.berkeley.cs194.audio.PitchDetector.FrequencyReceiver;
 import edu.berkeley.cs194.audio.SoundPlayer;
 import edu.berkeley.cs194.util.Utils;
 
@@ -113,7 +115,10 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 	protected void onResume() {
 		super.onResume();
 
-		detector = new PitchDetector(this);
+		ArrayList<FrequencyReceiver> receivers = new ArrayList<PitchDetector.FrequencyReceiver>();
+		receivers.add(this);
+		receivers.add(receiver);
+		detector = new PitchDetector(receivers);
 		player = new SoundPlayer();
 	}
 
@@ -134,14 +139,30 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 
 				@Override
 				public void run() {
-					// int binary = frequency > 1000 ? 1 : 0;
-					// status.setText(String.format("%d (f:%d : a:%d)", binary,
-					// frequency, amplitude));
-					status.setText(String.format("(f:%f : a:%f)", frequency,
-							amplitude));
+					status.setText(String.format("(f:%d : a:%d)",
+							Math.round(frequency), Math.round(amplitude)));
 				}
 
 			});
 		}
 	}
+
+	FrequencyReceiver receiver = new FrequencyReceiver() {
+		long lastTime = -1;
+
+		@Override
+		public void updateFrequency(double frequency, double amplitude,
+				HashMap<Double, Double> frequencies) {
+			if (amplitude > 500) {
+				long current = SystemClock.uptimeMillis();
+				if (lastTime != -1) {
+					long diff = current - lastTime;
+					Log.d("Receiver", "diff: " + diff);
+				}
+				lastTime = current;
+				
+				Log.d("Receiver", "received " + frequency);
+			}
+		}
+	};
 }
