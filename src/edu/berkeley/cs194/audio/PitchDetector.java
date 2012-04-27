@@ -69,77 +69,76 @@ public class PitchDetector extends Thread {
 		final int max_frequency_fft = Math.round(MAX_FREQUENCY
 				* CHUNK_SIZE_IN_SAMPLES / RATE);
 		recorder_.startRecording();
-		recorder_.setNotificationMarkerPosition(800);
 
-		recorder_.setRecordPositionUpdateListener(new OnRecordPositionUpdateListener() {
+		final int period = (int) (SoundPlayer.duration * RATE);
+		recorder_.setNotificationMarkerPosition(period / 2);
 
-			@Override
-			public void onMarkerReached(AudioRecord arg0) {
-				recorder_.setPositionNotificationPeriod(1600);
-				
-			}
+		recorder_
+				.setRecordPositionUpdateListener(new OnRecordPositionUpdateListener() {
 
-			@Override
-			public void onPeriodicNotification(AudioRecord recorder) {
-				for (int i = 0; i < CHUNK_SIZE_IN_SAMPLES; i++) {
-					x_r[i] = audio_data[i];
-					x_i[i] = 0;
-				}
-				fft.doFFT(x_r, x_i, false);
-				double best_frequency = min_frequency_fft;
-				double best_amplitude = 0;
-				HashMap<Double, Double> frequencies = new HashMap<Double, Double>();
-				final double draw_frequency_step = 1.0 * RATE
-						/ CHUNK_SIZE_IN_SAMPLES;
-				for (int i = min_frequency_fft; i <= max_frequency_fft; i++) {
-					final double current_frequency = i * 1.0 * RATE
-							/ CHUNK_SIZE_IN_SAMPLES;
-					final double draw_frequency = Math
-							.round((current_frequency - MIN_FREQUENCY)
-									/ DRAW_FREQUENCY_STEP)
-							* DRAW_FREQUENCY_STEP + MIN_FREQUENCY;
-					final double current_amplitude = Math.pow(x_r[i], 2)
-							+ Math.pow(x_i[i], 2);
-					Double current_sum_for_this_slot = frequencies
-							.get(draw_frequency);
-					if (current_sum_for_this_slot == null)
-						current_sum_for_this_slot = 0.0;
-					frequencies.put(draw_frequency,
-							Math.pow(current_amplitude, 0.5) / draw_frequency_step
-									+ current_sum_for_this_slot);
-					if (current_amplitude > best_amplitude) {
-						best_frequency = current_frequency;
-						best_amplitude = current_amplitude;
+					@Override
+					public void onMarkerReached(AudioRecord arg0) {
+						recorder_.setPositionNotificationPeriod(period);
+
 					}
-				}
-				PostToUI(best_frequency, best_amplitude, frequencies);
 
-				// delay thread so that we update every 600 ms
-/*				long duration = (long) (SoundPlayer.duration * 1000);
-				final long current = SystemClock.uptimeMillis();
-				long delay = 0;
-				if (lastTime != -1) {
-					long diff = current - lastTime;
-					delay = duration - diff % duration;
-					// Log.d("PitchDetector", "delay " + delay);
-				}
-				lastTime = current + delay;
+					@Override
+					public void onPeriodicNotification(AudioRecord recorder) {
+						for (int i = 0; i < CHUNK_SIZE_IN_SAMPLES; i++) {
+							x_r[i] = audio_data[i];
+							x_i[i] = 0;
+						}
+						fft.doFFT(x_r, x_i, false);
+						double best_frequency = min_frequency_fft;
+						double best_amplitude = 0;
+						HashMap<Double, Double> frequencies = new HashMap<Double, Double>();
+						final double draw_frequency_step = 1.0 * RATE
+								/ CHUNK_SIZE_IN_SAMPLES;
+						for (int i = min_frequency_fft; i <= max_frequency_fft; i++) {
+							final double current_frequency = i * 1.0 * RATE
+									/ CHUNK_SIZE_IN_SAMPLES;
+							final double draw_frequency = Math
+									.round((current_frequency - MIN_FREQUENCY)
+											/ DRAW_FREQUENCY_STEP)
+									* DRAW_FREQUENCY_STEP + MIN_FREQUENCY;
+							final double current_amplitude = Math
+									.pow(x_r[i], 2) + Math.pow(x_i[i], 2);
+							Double current_sum_for_this_slot = frequencies
+									.get(draw_frequency);
+							if (current_sum_for_this_slot == null)
+								current_sum_for_this_slot = 0.0;
+							frequencies.put(draw_frequency,
+									Math.pow(current_amplitude, 0.5)
+											/ draw_frequency_step
+											+ current_sum_for_this_slot);
+							if (current_amplitude > best_amplitude) {
+								best_frequency = current_frequency;
+								best_amplitude = current_amplitude;
+							}
+						}
+						PostToUI(best_frequency, best_amplitude, frequencies);
 
-				try {
-					Thread.sleep(delay);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
-				
-			}
-			
-		});
+						// delay thread so that we update every 600 ms
+						/*
+						 * long duration = (long) (SoundPlayer.duration * 1000);
+						 * final long current = SystemClock.uptimeMillis(); long
+						 * delay = 0; if (lastTime != -1) { long diff = current
+						 * - lastTime; delay = duration - diff % duration; //
+						 * Log.d("PitchDetector", "delay " + delay); } lastTime
+						 * = current + delay;
+						 * 
+						 * try { Thread.sleep(delay); } catch
+						 * (InterruptedException e) { // TODO Auto-generated
+						 * catch block e.printStackTrace(); }
+						 */
+
+					}
+
+				});
 		while (!Thread.interrupted()) {
-			
+
 			recorder_.read(audio_data, 0, CHUNK_SIZE_IN_BYTES / 2);
 
-			
 		}
 		recorder_.stop();
 	}
