@@ -115,7 +115,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		super.onResume();
 
 		ArrayList<FrequencyReceiver> receivers = new ArrayList<PitchDetector.FrequencyReceiver>();
-		receivers.add(this);
+		// receivers.add(this);
 		receivers.add(receiver);
 		detector = new PitchDetector(receivers);
 		player = new SoundPlayer();
@@ -174,16 +174,20 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 						if (tones.size() == SoundPlayer.CONTROL_TONE_NUM) {
 							tones.clear();
 							started = true;
+							connected();
 							Log.d("Receiver",
 									"Control tone succeeded. Connection opened.");
 						} else if (tones.size() == 1) {
 							Log.d("Receiver", "Listening for "
 									+ SoundPlayer.CONTROL_TONE_NUM
 									+ " HIGH tones.");
+							connecting();
 						}
 					} else {
+						// low tone
 						tones.clear();
 						Log.d("Receiver", "Control tone failed.");
+						failed();
 					}
 				}
 			} else {
@@ -192,18 +196,67 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 					if (tones.isEmpty()) {
 						started = false;
 						Log.d("Receiver", "Connection closed.");
+						disconnected();
 					} else {
 						String text = Utils.morseToText(tones);
 						Log.d("Receiver", "Text: " + text);
+						addLetter(text);
 					}
 					tones.clear();
 				} else {
+					// expected control tone
 					if (!tones.isEmpty()) {
 						tones.clear();
 						Log.d("Receiver", "Control tone failed.");
+						failed();
 					}
 				}
 			}
 		}
 	};
+
+	public void addLetter(final String letter) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				status.setText(status.getText() + letter);
+			}
+		});
+	}
+
+	public void connecting() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				status.setText("Connecting...");
+			}
+		});
+	}
+
+	public void connected() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				status.setText("Connected: ");
+			}
+		});
+	}
+
+	public void disconnected() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				status.setText(status.getText() + ".");
+			}
+		});
+	}
+
+	public void failed() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				status.setText("Idle...");
+			}
+		});
+	}
 }

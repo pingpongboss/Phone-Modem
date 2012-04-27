@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="16dp"
-        android:text="listening"
+        android:text="Idle..."
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
