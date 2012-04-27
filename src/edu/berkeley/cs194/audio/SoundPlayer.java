@@ -10,7 +10,7 @@ public class SoundPlayer extends Thread {
 	public final static int MEDIUM = (HIGH + LOW) / 2;
 	public final static int SILENT = -1;
 
-	protected final static double duration = .5; // seconds
+	public final static double duration = .5; // seconds
 	private final int sampleRate = 8000;
 	private final int numSamples = (int) (duration * sampleRate);
 	private double sample[];

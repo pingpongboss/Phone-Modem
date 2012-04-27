@@ -1,7 +1,10 @@
 package edu.berkeley.cs194.activity;
 
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -9,18 +12,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import edu.berkeley.cs194.R;
-import edu.berkeley.cs194.audio.RecorderThread;
-import edu.berkeley.cs194.audio.RecorderThread.FrequencyReceiver;
+import edu.berkeley.cs194.audio.PitchDetector.FrequencyReceiver;
+import edu.berkeley.cs194.audio.PitchDetector;
 import edu.berkeley.cs194.audio.SoundPlayer;
 import edu.berkeley.cs194.util.Utils;
 
 public class AudioModemActivity extends Activity implements FrequencyReceiver {
-	RecorderThread recorder;
+	PitchDetector detector;
 	SoundPlayer player;
 	TextView status;
 	EditText frequency, message;
 	Button play, stop, test, high, low, send;
-	
 
 	/** Called when the activity is first created. */
 	@Override
@@ -111,7 +113,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 	protected void onResume() {
 		super.onResume();
 
-		recorder = new RecorderThread(this);
+		detector = new PitchDetector(this);
 		player = new SoundPlayer();
 	}
 
@@ -119,21 +121,26 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 	protected void onPause() {
 		super.onPause();
 
-		recorder.end();
+		detector.interrupt();
 		player.end();
 	}
 
 	@Override
-	public void updateFrequency(final int frequency, final int amplitude) {
-		if (amplitude > 200000) {
+	public void updateFrequency(final double frequency, final double amplitude,
+			final HashMap<Double, Double> frequencies) {
+
+		if (amplitude > 500) {
 			runOnUiThread(new Runnable() {
 
 				@Override
 				public void run() {
-					int binary = frequency > RecorderThread.THRESHOLD ? 1 : 0;
-					status.setText(String.format("%d (f:%d : a:%d)", binary,
-							frequency, amplitude));
+					// int binary = frequency > 1000 ? 1 : 0;
+					// status.setText(String.format("%d (f:%d : a:%d)", binary,
+					// frequency, amplitude));
+					status.setText(String.format("(f:%f : a:%f)", frequency,
+							amplitude));
 				}
+
 			});
 		}
 	}

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import edu.berkeley.cs194.audio.RecorderThread;
 import edu.berkeley.cs194.audio.SoundPlayer;
+import edu.berkeley.cs194.deprecated.RecorderThread;
 
 public class Utils {
 	public static int[] textToMorse(String text) {
