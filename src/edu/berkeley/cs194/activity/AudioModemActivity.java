@@ -155,6 +155,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		@Override
 		public void updateFrequency(double frequency, double amplitude,
 				HashMap<Double, Double> frequencies) {
+			
 			long current = SystemClock.uptimeMillis();
 			if (lastTime != -1) {
 				// long diff = current - lastTime;
@@ -162,7 +163,8 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 			}
 			lastTime = current;
 
-			if (amplitude > 500) {
+			if (amplitude > 1000000) {
+				Log.d("Update", frequency + "");
 				// we hear a tone
 				int tone = frequency > SoundPlayer.MEDIUM ? SoundPlayer.HIGH
 						: SoundPlayer.LOW;
