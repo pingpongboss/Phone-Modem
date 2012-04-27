@@ -155,6 +155,7 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		@Override
 		public void updateFrequency(double frequency, double amplitude,
 				HashMap<Double, Double> frequencies) {
+
 			long current = SystemClock.uptimeMillis();
 			if (lastTime != -1) {
 				// long diff = current - lastTime;
