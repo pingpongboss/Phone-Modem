@@ -1,7 +1,6 @@
 package edu.berkeley.cs194.activity;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -153,14 +152,14 @@ public class AudioModemActivity extends Activity implements FrequencyReceiver {
 		@Override
 		public void updateFrequency(double frequency, double amplitude,
 				HashMap<Double, Double> frequencies) {
+			long current = SystemClock.uptimeMillis();
+			if (lastTime != -1) {
+				long diff = current - lastTime;
+				Log.d("Receiver", "diff: " + diff);
+			}
+			lastTime = current;
+
 			if (amplitude > 500) {
-				long current = SystemClock.uptimeMillis();
-				if (lastTime != -1) {
-					long diff = current - lastTime;
-					Log.d("Receiver", "diff: " + diff);
-				}
-				lastTime = current;
-				
 				Log.d("Receiver", "received " + frequency);
 			}
 		}

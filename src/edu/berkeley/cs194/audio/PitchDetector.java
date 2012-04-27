@@ -10,8 +10,6 @@ package edu.berkeley.cs194.audio;
  ** implied warranty.
  */
 
-import java.lang.Runnable;
-import java.lang.Thread;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,6 +17,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
 import android.os.Handler;
+import android.os.SystemClock;
 
 public class PitchDetector extends Thread {
 	// Currently, only this combination of rate, encoding and channel mode
@@ -51,13 +50,16 @@ public class PitchDetector extends Thread {
 		start();
 	}
 
+	long lastTime = -1;
+
 	public void run() {
 		android.os.Process
 				.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 		recorder_ = new AudioRecord(AudioSource.MIC, RATE, CHANNEL_MODE,
 				ENCODING, 6144);
-//		recorder_ = new AudioRecord(AudioSource.VOICE_CALL, RATE, CHANNEL_MODE,
-//				ENCODING, 6144);
+		// recorder_ = new AudioRecord(AudioSource.VOICE_CALL, RATE,
+		// CHANNEL_MODE,
+		// ENCODING, 6144);
 		if (recorder_.getState() != AudioRecord.STATE_INITIALIZED) {
 			return;
 		}
@@ -105,6 +107,24 @@ public class PitchDetector extends Thread {
 				}
 			}
 			PostToUI(best_frequency, best_amplitude, frequencies);
+
+			// delay thread so that we update every 600 ms
+			long duration = (long) (SoundPlayer.duration * 1000);
+			final long current = SystemClock.uptimeMillis();
+			long delay = 0;
+			if (lastTime != -1) {
+				long diff = current - lastTime;
+				delay = duration - diff % duration;
+				// Log.d("PitchDetector", "delay " + delay);
+			}
+			lastTime = current + delay;
+
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -112,6 +132,7 @@ public class PitchDetector extends Thread {
 			final HashMap<Double, Double> frequencies) {
 		handler_.post(new Runnable() {
 			public void run() {
+				// Log.d("PitchDetector", "delayed " + delayed);
 				for (FrequencyReceiver receiver : receivers_) {
 					receiver.updateFrequency(frequency, amplitude, frequencies);
 				}
